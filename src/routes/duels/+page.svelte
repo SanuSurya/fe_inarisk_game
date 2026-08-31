@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { Search, Swords, Trophy, Users } from '@lucide/svelte';
+	import { Search, Swords, Trash2, Trophy, Users } from '@lucide/svelte';
 	import AdminShell from '$lib/components/AdminShell.svelte';
 	import Status from '$lib/components/Status.svelte';
 	import Pagination from '$lib/components/Pagination.svelte';
@@ -16,6 +16,7 @@
 	let pageSize = $state(10);
 	let loading = $state(true);
 	let error = $state('');
+	let deletingId = $state('');
 
 	let records = $derived(mode === 'quiz' ? quizDuels : adventureDuels);
 	let filtered = $derived.by(() => {
@@ -97,6 +98,28 @@
 	function duration(seconds) {
 		const value = Number(seconds || 0);
 		return `${Math.floor(value / 60)}m ${value % 60}d`;
+	}
+
+	async function deleteDuel(duel) {
+		if (duel.status !== 'cancelled' || deletingId) return;
+		if (!confirm(`Hapus duel ${duel.challenger.display_name} vs ${duel.opponent.display_name}?`)) {
+			return;
+		}
+		deletingId = duel.id;
+		error = '';
+		try {
+			if (mode === 'quiz') {
+				await adminApi.deleteQuizDuel(duel.id);
+				quizDuels = quizDuels.filter((item) => item.id !== duel.id);
+			} else {
+				await adminApi.deleteAdventureDuel(duel.id);
+				adventureDuels = adventureDuels.filter((item) => item.id !== duel.id);
+			}
+		} catch (cause) {
+			error = cause.message;
+		} finally {
+			deletingId = '';
+		}
 	}
 </script>
 
@@ -182,7 +205,7 @@
 					<thead
 						><tr
 							><th>Waktu</th><th>Pertandingan</th><th>Materi</th><th>Status</th><th>Pemenang</th><th
-								>Hasil Pemain</th
+								>Hasil Pemain</th><th class="w-20 text-right">Aksi</th
 							></tr
 						></thead
 					>
@@ -244,6 +267,19 @@
 											{/each}
 										</div>
 									{:else}<span class="text-slate-400">Belum ada hasil pemain</span>{/if}
+								</td>
+								<td class="text-right">
+									{#if duel.status === 'cancelled'}
+										<button
+											class="btn btn-danger"
+											disabled={deletingId === duel.id}
+											onclick={() => deleteDuel(duel)}
+											aria-label={`Hapus duel ${duel.challenger.display_name} melawan ${duel.opponent.display_name}`}
+											><Trash2 size={16} aria-hidden="true" /> {deletingId === duel.id
+												? 'Menghapus…'
+												: 'Hapus'}</button
+										>
+									{:else}<span class="text-slate-300">–</span>{/if}
 								</td>
 							</tr>
 						{/each}

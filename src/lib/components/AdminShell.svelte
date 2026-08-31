@@ -24,6 +24,7 @@
 		['/players', 'Pemain', Users],
 		['/logs', 'Log Pemain', ScrollText],
 		['/duels', 'Hasil Duel', Swords],
+		['/multiplayer-ranking', 'Peringkat Multiplayer', Trophy],
 		['/leaderboard', 'Peringkat', Trophy]
 	];
 

@@ -48,6 +48,10 @@ export const adminApi = {
 	logs: () => api('/api/v1/admin/logs?limit=500'),
 	quizDuels: () => api('/api/v1/admin/duels/quiz'),
 	adventureDuels: () => api('/api/v1/admin/duels/adventure'),
+	deleteQuizDuel: (id) => api(`/api/v1/admin/duels/quiz/${id}`, { method: 'DELETE' }),
+	deleteAdventureDuel: (id) =>
+		api(`/api/v1/admin/duels/adventure/${id}`, { method: 'DELETE' }),
+	multiplayerLeaderboard: () => api('/api/v1/admin/multiplayer-leaderboard'),
 	leaderboard: (filters = {}) =>
 		api(`/api/v1/leaderboard?${new URLSearchParams({ ...filters, limit: '100' })}`)
 };
