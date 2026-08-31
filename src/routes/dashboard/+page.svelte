@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { Users, CircleHelp, BrainCircuit, Gamepad2, Trophy } from '@lucide/svelte';
+	import { Users, CircleHelp, BrainCircuit, Gamepad2, Radio, Trophy } from '@lucide/svelte';
 	import AdminShell from '$lib/components/AdminShell.svelte';
 	import Status from '$lib/components/Status.svelte';
 	import { adminApi } from '$lib/api';
@@ -28,6 +28,12 @@
 						data.adventure_sessions,
 						Gamepad2,
 						'text-violet-600 bg-violet-50'
+					],
+					[
+						'Adventure Berlangsung',
+						data.active_adventure_duels,
+						Radio,
+						'text-rose-600 bg-rose-50'
 					],
 					['Skor Quiz Terbaik', data.best_quiz_score, Trophy, 'text-amber-600 bg-amber-50']
 				]
