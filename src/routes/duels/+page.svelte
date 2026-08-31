@@ -60,8 +60,15 @@
 
 	function winner(duel) {
 		if (duel.status !== 'completed' || duel.results?.length < 2) return null;
-		const [first, second] = duel.results;
+		const ordered = [...duel.results].sort((a, b) => {
+			const aLost = mode === 'quiz' ? Boolean(a.forfeited) : Boolean(a.failed);
+			const bLost = mode === 'quiz' ? Boolean(b.forfeited) : Boolean(b.failed);
+			if (aLost !== bLost) return aLost ? 1 : -1;
+			return b.score - a.score || a.duration_seconds - b.duration_seconds;
+		});
+		const [first, second] = ordered;
 		if (first.score === second.score && first.duration_seconds === second.duration_seconds) {
+			if (first.forfeited !== second.forfeited || first.failed !== second.failed) return first;
 			return { display_name: 'Seri' };
 		}
 		return first;
@@ -223,11 +230,12 @@
 															>{result.score} poin</span
 														>
 													</div>
-													{#if mode === 'quiz'}<p class="mt-1 text-xs text-slate-500">
-															{result.correct_answers}/{result.total_questions} benar • {duration(
-																result.duration_seconds
-															)}
-														</p>{:else}<p class="mt-1 text-xs break-words text-slate-500">
+												{#if mode === 'quiz'}<p class="mt-1 text-xs text-slate-500">
+													{#if result.forfeited}<strong class="text-red-600">Mengundurkan diri</strong> • {/if}{result.correct_answers}/{result.total_questions} benar • {duration(
+														result.duration_seconds
+													)}
+												</p>{:else}<p class="mt-1 text-xs break-words text-slate-500">
+													{#if result.failed}<strong class="text-red-600">Keluar / gagal</strong> • {/if}
 															Warga {result.survivors_rescued}/{result.total_survivors} • Kit {result.medical_kits}/{result.total_medical_kits}
 															• Musuh {result.enemies_defeated}/{result.total_enemies} • {result.lives}
 															nyawa • {duration(result.duration_seconds)}
