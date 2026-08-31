@@ -1,0 +1,13 @@
+services:
+  admin:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      HOST: 0.0.0.0
+      PORT: 4114
+      PUBLIC_API_URL: ${PUBLIC_API_URL:-https://inarisk2.bnpb.go.id/inarisk-games-api}
+      ORIGIN: ${ORIGIN:-http://localhost:4114}
+    ports:
+      - '${ADMIN_PORT:-4114}:4114'
+    restart: unless-stopped
