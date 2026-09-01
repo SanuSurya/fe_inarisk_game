@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { Users, CircleHelp, BrainCircuit, Gamepad2, Radio, Trophy } from '@lucide/svelte';
 	import AdminShell from '$lib/components/AdminShell.svelte';
+	import HorizontalBarChart from '$lib/components/HorizontalBarChart.svelte';
 	import Status from '$lib/components/Status.svelte';
 	import { adminApi } from '$lib/api';
 
@@ -30,12 +31,7 @@
 						'text-violet-600 bg-violet-50',
 						`dari ${data.adventure_players ?? 0} pemain`
 					],
-					[
-						'Adventure Berlangsung',
-						data.active_adventure_duels,
-						Radio,
-						'text-rose-600 bg-rose-50'
-					],
+					['Adventure Berlangsung', data.active_adventure_duels, Radio, 'text-rose-600 bg-rose-50'],
 					['Skor Quiz Terbaik', data.best_quiz_score, Trophy, 'text-amber-600 bg-amber-50']
 				]
 			: []
@@ -45,7 +41,9 @@
 <AdminShell title="Dashboard">
 	{#if loading || error}<Status {loading} {error} />{:else}
 		<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
-			{#each cards as [label, value, Icon, color, detail]}<div class="panel flex items-center gap-4">
+			{#each cards as [label, value, Icon, color, detail]}<div
+					class="panel flex items-center gap-4"
+				>
 					<div class="rounded-xl p-3 {color}"><Icon size={25} aria-hidden="true" /></div>
 					<div class="min-w-0">
 						<p class="numeric text-2xl font-black text-slate-900">{value}</p>
@@ -53,6 +51,29 @@
 						{#if detail}<p class="mt-0.5 text-xs font-semibold text-slate-700">{detail}</p>{/if}
 					</div>
 				</div>{/each}
+		</div>
+		<div class="mt-6 grid gap-5 xl:grid-cols-3">
+			<HorizontalBarChart
+				title="Pemain Paling Aktif"
+				description="Berdasarkan total sesi Quiz, Adventure, dan hasil duel yang tercatat."
+				items={data.charts?.active_players ?? []}
+				unit="aktivitas"
+				barClass="bg-blue-500"
+			/>
+			<HorizontalBarChart
+				title="Skor Quiz Tertinggi"
+				description="Akumulasi skor terbaik pemain pada setiap materi dan tingkat kesulitan."
+				items={data.charts?.top_scores ?? []}
+				unit="poin"
+				barClass="bg-amber-500"
+			/>
+			<HorizontalBarChart
+				title="Juara Multiplayer"
+				description="Pemain dengan kemenangan terbanyak dari duel Quiz dan Adventure."
+				items={data.charts?.multiplayer_winners ?? []}
+				unit="menang"
+				barClass="bg-emerald-500"
+			/>
 		</div>
 		<div class="panel mt-6">
 			<h2 class="text-lg font-bold">Administrasi Game</h2>
