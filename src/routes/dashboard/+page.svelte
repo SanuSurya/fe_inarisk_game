@@ -27,7 +27,8 @@
 						'Adventure Dimainkan',
 						data.adventure_sessions,
 						Gamepad2,
-						'text-violet-600 bg-violet-50'
+						'text-violet-600 bg-violet-50',
+						`dari ${data.adventure_players ?? 0} pemain`
 					],
 					[
 						'Adventure Berlangsung',
@@ -44,11 +45,12 @@
 <AdminShell title="Dashboard">
 	{#if loading || error}<Status {loading} {error} />{:else}
 		<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
-			{#each cards as [label, value, Icon, color]}<div class="panel flex items-center gap-4">
+			{#each cards as [label, value, Icon, color, detail]}<div class="panel flex items-center gap-4">
 					<div class="rounded-xl p-3 {color}"><Icon size={25} aria-hidden="true" /></div>
 					<div class="min-w-0">
 						<p class="numeric text-2xl font-black text-slate-900">{value}</p>
 						<p class="text-xs text-slate-500">{label}</p>
+						{#if detail}<p class="mt-0.5 text-xs font-semibold text-slate-700">{detail}</p>{/if}
 					</div>
 				</div>{/each}
 		</div>
