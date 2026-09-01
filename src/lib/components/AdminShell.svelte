@@ -46,6 +46,7 @@
 		></button>{/if}
 	<aside
 		id="admin-sidebar"
+		data-tour="admin-navigation"
 		class="fixed inset-y-0 left-0 z-40 flex h-dvh w-68 flex-col overflow-hidden bg-slate-950 text-white transition-transform lg:translate-x-0 {open
 			? 'translate-x-0'
 			: '-translate-x-full'}"
