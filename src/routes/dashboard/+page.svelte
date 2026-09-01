@@ -40,7 +40,7 @@
 
 <AdminShell title="Dashboard">
 	{#if loading || error}<Status {loading} {error} />{:else}
-		<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
+		<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
 			{#each cards as [label, value, Icon, color, detail]}<div
 					class="panel flex items-center gap-4"
 				>
