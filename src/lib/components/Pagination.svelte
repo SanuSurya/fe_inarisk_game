@@ -31,7 +31,7 @@
 			<label class="flex items-center gap-2 text-sm text-slate-600">
 				<span>Tampilkan</span>
 				<select
-					class="field w-20 py-1.5"
+					class="field w-24 py-1.5"
 					name="page_size"
 					aria-label={`Jumlah ${label} per halaman`}
 					bind:value={pageSize}
