@@ -1,20 +1,70 @@
 <script>
-	let { title, description, items = [], unit, barClass = 'bg-blue-500' } = $props();
+	import { onMount } from 'svelte';
+	import Chart from 'chart.js/auto';
 
-	const maximum = $derived(Math.max(...items.map((item) => Number(item.value) || 0), 1));
+	let { title, description, items = [], unit, color = '#3b82f6' } = $props();
+	let canvas = $state();
+
+	const titleId = $derived(`${title.replaceAll(' ', '-').toLowerCase()}-title`);
+
+	onMount(() => {
+		if (!canvas || items.length === 0) return;
+
+		const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		const chart = new Chart(canvas, {
+			type: 'bar',
+			data: {
+				labels: items.map((item) => item.label),
+				datasets: [
+					{
+						data: items.map((item) => Number(item.value) || 0),
+						backgroundColor: color,
+						borderColor: color,
+						borderWidth: 1,
+						borderRadius: 6,
+						borderSkipped: false,
+						barThickness: 16
+					}
+				]
+			},
+			options: {
+				indexAxis: 'y',
+				responsive: true,
+				maintainAspectRatio: false,
+				animation: reduceMotion ? false : { duration: 650 },
+				interaction: { mode: 'nearest', axis: 'y', intersect: false },
+				plugins: {
+					legend: { display: false },
+					tooltip: {
+						displayColors: false,
+						callbacks: {
+							label: (context) => `${context.parsed.x} ${unit}`
+						}
+					}
+				},
+				scales: {
+					x: {
+						beginAtZero: true,
+						grid: { color: '#e2e8f0' },
+						border: { display: false },
+						ticks: { precision: 0, color: '#64748b', font: { size: 10 } }
+					},
+					y: {
+						grid: { display: false },
+						border: { display: false },
+						ticks: { color: '#334155', font: { size: 11, weight: 600 } }
+					}
+				}
+			}
+		});
+
+		return () => chart.destroy();
+	});
 </script>
 
-<section
-	class="panel min-w-0"
-	aria-labelledby={`${title.replaceAll(' ', '-').toLowerCase()}-title`}
->
+<section class="panel min-w-0" aria-labelledby={titleId}>
 	<div>
-		<h2
-			id={`${title.replaceAll(' ', '-').toLowerCase()}-title`}
-			class="text-base font-bold text-slate-900"
-		>
-			{title}
-		</h2>
+		<h2 id={titleId} class="text-base font-bold text-slate-900">{title}</h2>
 		<p class="mt-1 text-xs leading-5 text-slate-500">{description}</p>
 	</div>
 
@@ -23,22 +73,12 @@
 			Belum ada data untuk ditampilkan.
 		</p>
 	{:else}
-		<ol class="mt-5 space-y-4">
-			{#each items as item, index}
-				<li>
-					<div class="mb-1.5 flex items-baseline justify-between gap-3 text-sm">
-						<span class="min-w-0 truncate font-medium text-slate-700" title={item.label}>
-							{index + 1}. {item.label}
-						</span>
-						<span class="numeric shrink-0 font-bold text-slate-900">{item.value} {unit}</span>
-					</div>
-					<div class="h-2.5 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
-						<div
-							class="h-full rounded-full {barClass}"
-							style={`width: ${Math.max((Number(item.value) / maximum) * 100, 3)}%`}
-						></div>
-					</div>
-				</li>
+		<div class="relative mt-5 h-64" aria-hidden="true">
+			<canvas bind:this={canvas}></canvas>
+		</div>
+		<ol class="sr-only">
+			{#each items as item}
+				<li>{item.label}: {item.value} {unit}</li>
 			{/each}
 		</ol>
 	{/if}

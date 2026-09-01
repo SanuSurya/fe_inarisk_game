@@ -58,21 +58,21 @@
 				description="Berdasarkan total sesi Quiz, Adventure, dan hasil duel yang tercatat."
 				items={data.charts?.active_players ?? []}
 				unit="aktivitas"
-				barClass="bg-blue-500"
+				color="#3b82f6"
 			/>
 			<HorizontalBarChart
 				title="Skor Quiz Tertinggi"
 				description="Akumulasi skor terbaik pemain pada setiap materi dan tingkat kesulitan."
 				items={data.charts?.top_scores ?? []}
 				unit="poin"
-				barClass="bg-amber-500"
+				color="#f59e0b"
 			/>
 			<HorizontalBarChart
 				title="Juara Multiplayer"
 				description="Pemain dengan kemenangan terbanyak dari duel Quiz dan Adventure."
 				items={data.charts?.multiplayer_winners ?? []}
 				unit="menang"
-				barClass="bg-emerald-500"
+				color="#10b981"
 			/>
 		</div>
 		<div class="panel mt-6">
